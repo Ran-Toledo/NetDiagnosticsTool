@@ -31,5 +31,9 @@
 *.out
 *.app
 
+# Directories
 .vs/
 out/
+nppBackup/
+Data/*.txt
+Data/*.csv

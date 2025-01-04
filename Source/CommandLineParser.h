@@ -1,7 +1,7 @@
 // CCommandLineParser.h
 #pragma once
 
-#include "CICommandLineParser.h"
+#include "ICommandLineParser.h"
 
 #ifdef _WIN32
 class CommandLineParserWindows : public CICommandLineParser {

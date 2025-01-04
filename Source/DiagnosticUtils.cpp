@@ -1,8 +1,8 @@
-#include "CDiagnosticUtils.h"
+#include "DiagnosticUtils.h"
 #include <chrono>
 #include <sstream>
 #include <iomanip>
-#include <unistd.h>
+//#include <unistd.h>
 
 std::vector<std::string> CDiagnosticUtils::executeCommand(const std::string& command) {
     std::vector<std::string> result;

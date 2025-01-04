@@ -1,4 +1,4 @@
-#include "CDatabaseManager.h"
+#include "DatabaseManager.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>

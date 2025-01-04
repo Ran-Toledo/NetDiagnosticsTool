@@ -1,7 +1,7 @@
 // CNetworkDiagnosticsWindows.h
 #pragma once
 
-#include "CINetworkDiagnostics.h"
+#include "INetworkDiagnostics.h"
 
 #ifdef _WIN32
 class CNetworkDiagnosticsWindows : public CINetworkDiagnostics

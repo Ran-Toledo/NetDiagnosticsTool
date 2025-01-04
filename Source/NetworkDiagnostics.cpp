@@ -1,6 +1,6 @@
-#include "CNetworkDiagnostics.h"
-#include "CCommandLineParser.h"
-#include "CDiagnosticUtils.h"
+#include "NetworkDiagnostics.h"
+#include "CommandLineParser.h"
+#include "DiagnosticUtils.h"
 #include <iostream>
 #include <string>
 #include <thread>
