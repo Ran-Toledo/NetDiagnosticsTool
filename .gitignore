@@ -37,3 +37,8 @@ out/
 nppBackup/
 Data/*.txt
 Data/*.csv
+Delivery/Linux/linux-debug/*
+Delivery/Windows/x64-debug/*
+Delivery/Windows/x64-release/*
+Delivery/Windows/x86-debug/*
+Delivery/Windows/x86-release/*

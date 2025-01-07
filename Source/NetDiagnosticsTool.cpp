@@ -1,27 +1,38 @@
-#include "NetworkDiagnostics.h"
-#include "DatabaseManager.h"
-#include <thread>
+#include "DiagnosticsController.h"
+#include <filesystem>
+#include <algorithm>
 
+int main(int argc, char* argv[])
+{
+	std::string targetIP;
 
-int main() {
-    CINetworkDiagnostics* netDiagnostics;
-#ifdef _WIN32
-    netDiagnostics = new CNetworkDiagnosticsWindows("192.168.1.1");
-#elif __linux__
-    netDiagnostics = new CNetworkDiagnosticsLinux("192.168.1.1");
-#endif
-    std::thread monitor_thread([netDiagnostics] { netDiagnostics->monitorConnections(); });
-    std::thread system_log_thread([netDiagnostics] { netDiagnostics->logSystemStatistics(); });
-    std::thread network_log_thread([netDiagnostics] { netDiagnostics->logNetworkDiagnostics(); });
-    
-    monitor_thread.join();
-    system_log_thread.join();
-    network_log_thread.join();
-    
-    DatabaseManager dbManager("C:\\Users\\UGE\\Documents\\Projects\\NetDiagnosticsTool\\active_connections_log.csv", 
-							   "C:\\Users\\UGE\\Documents\\Projects\\NetDiagnosticsTool\\Data\\netDiagnostics.db");
-    std::vector<std::string> columnNames = { "Protocol", "Local_Address", "Foreign_Address", "State" };
-    dbManager.importCSVToDatabase("ActiveConnections", columnNames);
+	if (argc == 2) {
+		targetIP = argv[1];
+	}
 
-    return 0;
+	std::filesystem::path projectDir = std::filesystem::path(__FILE__).parent_path().parent_path();
+	std::string projectDirStr = projectDir.string();
+	std::replace(projectDirStr.begin(), projectDirStr.end(), '\\', '/');
+
+	std::string dataDirectory = projectDirStr + "/Data";
+	std::string scriptDirectory = projectDirStr + "/Scripts";
+
+	// Sqlite Database file
+	std::string dbFilePath = dataDirectory + "/NetDiagnostics.db";
+
+	if (DiagnosticsController* diagnosticsController = DiagnosticsController::getInstance())
+	{
+		diagnosticsController->openDatabase(dbFilePath);
+		diagnosticsController->setScriptDirectory(scriptDirectory);
+		diagnosticsController->setOutputDirectory(dataDirectory);
+
+		if (!targetIP.empty())
+		{
+			diagnosticsController->setTargetAddress(targetIP);
+		}
+
+		diagnosticsController->runDiagnostics();
+	}
+
+	return 0;
 }

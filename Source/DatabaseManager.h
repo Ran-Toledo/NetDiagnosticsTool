@@ -1,26 +1,39 @@
+// DatabaseManager.h
 #pragma once
 
 #include <string>
+#include <mutex>
 #include <vector>
 #include <sqlite3.h>
+#include <map>
 
-class DatabaseManager {
+class DatabaseManager
+{
 public:
-    // Constructor and destructor
-    DatabaseManager(const std::string& csvFilePath, const std::string& dbFilePath);
+    DatabaseManager(const DatabaseManager&) = delete;
+    DatabaseManager& operator=(const DatabaseManager&) = delete;
     ~DatabaseManager();
 
-    // Methods for reading CSV, importing to SQLite, and performing analysis
-    void importCSVToDatabase(const std::string& tableName, const std::vector<std::string>& columnNames);
-    void performBasicAnalysis();
+    static DatabaseManager* getInstance();
+
+    bool isDatabaseOpen() const;
+    void openDatabase(const std::string& dbFilePath);
+    void batchImportCSV(const std::vector<std::pair<std::string, std::string>>& csvFilesAndTables);
+    void importCSVToDatabase(const std::string& csvFilePath, const std::string& tableName);
+    void executeSql(const std::string& sql);
+    std::vector<std::string> getColumnNames(const std::string& tableName) const;
 
 private:
-    std::string m_csvFilePath;
-    std::string m_dbFilePath;
-    sqlite3* m_db;
+    DatabaseManager();
 
-    // Helper methods for internal use
-    std::vector<std::vector<std::string>> readCSV();
-    void insertIntoDatabase(const std::string& tableName, const std::vector<std::string>& columnNames, const std::vector<std::vector<std::string>>& data);
-    void analyzeData();
+    void createTable(const std::string& header, const std::string& tableName);
+    void executeModifyQuery(const std::string& query);
+    std::vector<std::map<std::string, std::string>> executeSelectQuery(const std::string& query);
+
+    sqlite3* m_db;
+    std::string m_dbFilePath;
+    std::mutex m_dbMutex;
+    bool m_dbOpen;
+
+    static DatabaseManager* instance;
 };
